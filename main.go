@@ -244,6 +244,10 @@ func initTodo() error {
 			}
 		}
 	}
+	if _, err := os.Stat(currentDir + "/todo"); err != nil {
+		errors.New("todo file is already exist.")
+		return
+	}
 	err := ioutil.WriteFile(currentDir+"/todo", []byte{}, 0755)
 	if err != nil {
 		fmt.Println("Permission denied.")
