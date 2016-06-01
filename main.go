@@ -94,12 +94,18 @@ CONFIRM:
 }
 
 func (t *Todo) ShowTodo() {
+	if len(t.Todo) == 0 {
+		fmt.Println("nothing is here. have a good day:)")
+	}
 	for _, v := range t.Todo {
 		fmt.Println(v)
 	}
 }
 
 func (t *Todo) ShowArchive() {
+	if len(t.Todo) == 0 {
+		fmt.Println("nothing is here.")
+	}
 	for _, v := range t.Archive {
 		fmt.Println(v)
 	}
@@ -107,10 +113,16 @@ func (t *Todo) ShowArchive() {
 
 func (t *Todo) ShowAll() {
 	fmt.Printf("[ ACTIVE TODO ]\n")
+	if len(t.Todo) == 0 {
+		fmt.Println("nothing is here.")
+	}
 	for _, v := range t.Todo {
 		fmt.Println(v)
 	}
 	fmt.Printf("\n[ ARCHIVED TODO ]\n")
+	if len(t.Archive) == 0 {
+		fmt.Println("nothing is here.")
+	}
 	for _, v := range t.Archive {
 		fmt.Println(v)
 	}
@@ -134,24 +146,24 @@ func (t *Todo) Save() error {
 
 func main() {
 	var err error
-	v, err := filepath.Abs(".")
+	v, err := filepath.Abs(".") // get user current directory
 	if err != nil {
 		fmt.Println(unexpectedErrMsg)
 		return
 	}
-	err = os.Chdir(v)
+	err = os.Chdir(v) // move to user current directory in go app
 	if err != nil {
 		fmt.Println(unexpectedErrMsg)
 		return
 	}
-	currentDir, err = os.Getwd()
-	flag.StringVar(&message, "m", "", "set or archive one todo following this option")
-	flag.Parse()
+	currentDir, err = os.Getwd() // get current working directory (in this time, it must equal current user directory and go app working directory.
 	if err != nil {
 		fmt.Println(err.Error())
 		return
 	}
-	command := flagManage()
+	flag.StringVar(&message, "m", "", "set your message")
+	flag.Parse()
+	command := flagManage() // get what subcommand did user use
 	switch command {
 	case 0: // unexpected error
 		fmt.Println("sorry, but something wrong")
@@ -164,20 +176,22 @@ func main() {
 		}
 		return
 	default: // other command
+		// START: LABEL: SEEK
+		var info os.FileInfo
 	SEEK:
 		for {
-			_, err = os.Stat("todo")
+			info, err = os.Stat("todo") // check working directory's todo file
 			switch {
-			case err != nil:
+			case err != nil || (err == nil && !info.Mode().IsRegular()): // if there isn't todo file or it is directory.
 				err = chdir() // prevent unexpected error(change directory is not working in if transaction.
 				if err != nil {
 					return // break when chdir error occured
 				}
-				if v, err := os.Getwd(); v == "/" || err != nil {
+				if v, err = os.Getwd(); v == "/" || err != nil { // get working directory, and check whether it is root directory(it must be finished from infinite loop)
 					err = errors.New("no todo file is found. you can add todo by `todo init`")
 					break SEEK // break for when file not found
 				}
-			case err == nil:
+			case err == nil && info.Mode().IsRegular(): // there is a file or directory, and check it is a file.
 				fileDir, err = os.Getwd()
 				if err != nil {
 					fmt.Println(err.Error())
@@ -190,6 +204,7 @@ func main() {
 				return // unexpected error
 			}
 		} // LABEL: SEEK
+		// END: LABEL: SEEK
 		if err != nil {
 			fmt.Println(err.Error())
 			return
@@ -244,14 +259,16 @@ func initTodo() error {
 			}
 		}
 	}
-	if _, err := os.Stat(currentDir + "/todo"); err != nil {
+	if _, err := os.Stat(currentDir + "/todo"); err == nil { // existing a todo file or directory and it is fiel
 		return errors.New("todo file is already exist.")
 	}
 	err := ioutil.WriteFile(currentDir+"/todo", []byte{}, 0755)
 	if err != nil {
 		fmt.Println("Permission denied.")
+		return err
 	}
-	return err
+	fmt.Println("success!")
+	return nil
 }
 
 func flagManage() int {
