@@ -19,6 +19,7 @@ const (
 	all_                        // show all todo
 	showArchive_                // show archive
 	archive_                    // archives one todo
+	help_                       // show help
 	unexpectedErrMsg = "sorry, but something occured:("
 )
 
@@ -103,7 +104,7 @@ func (t *Todo) ShowTodo() {
 }
 
 func (t *Todo) ShowArchive() {
-	if len(t.Todo) == 0 {
+	if len(t.Archive) == 0 {
 		fmt.Println("nothing is here.")
 	}
 	for _, v := range t.Archive {
@@ -168,13 +169,22 @@ func main() {
 	case 0: // unexpected error
 		fmt.Println("sorry, but something wrong")
 		return
-	case 1: // init current directory
+	case init_: // init current directory
 		err = initTodo()
 		if err != nil {
 			fmt.Println(err.Error())
 			return
 		}
 		return
+	case help_:
+		fmt.Println(`
+todo               show active todo
+todo YOURMESSAGE   add todo
+todo archive       show archived todo
+todo archive add   you can archive one todo
+todo all           show all todo(active and archived)
+todo help          open this help
+`)
 	default: // other command
 		// START: LABEL: SEEK
 		var info os.FileInfo
@@ -279,6 +289,8 @@ func flagManage() int {
 		switch os.Args[1] {
 		case "all":
 			return all_ // show all todo
+		case "help":
+			return help_
 		case "archive":
 			if len(os.Args) > 2 {
 				if os.Args[2] == "add" {
