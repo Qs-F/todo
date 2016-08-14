@@ -69,6 +69,10 @@ func (t *Todo) AddTodo(s string) {
 
 func (t *Todo) ArchiveTodo() {
 	// display all todo
+	if len(t.Todo) == 0 {
+		fmt.Println("There is no todo🍻 ")
+		return
+	}
 	for i, v := range t.Todo {
 		fmt.Printf(coloring.Red("[ %d ] ")+"%s\n", i, fmt.Sprintf("%s", v))
 	}
