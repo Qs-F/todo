@@ -10,6 +10,8 @@ import (
 	"path/filepath"
 	"strconv"
 	"strings"
+
+	"github.com/Qs-F/coloring"
 )
 
 const (
@@ -68,10 +70,9 @@ func (t *Todo) AddTodo(s string) {
 func (t *Todo) ArchiveTodo() {
 	// display all todo
 	for i, v := range t.Todo {
-		fmt.Printf("[ %d ] %s\n", i, fmt.Sprintf("%s", v))
+		fmt.Printf(coloring.Red("[ %d ] ")+"%s\n", i, fmt.Sprintf("%s", v))
 	}
 	todo := []string{}
-	// archive := []string{}
 CONFIRM:
 	for { // choosing form
 		fmt.Printf("choose one: ")
@@ -97,37 +98,40 @@ CONFIRM:
 func (t *Todo) ShowTodo() {
 	if len(t.Todo) == 0 {
 		fmt.Println("nothing is here. have a good day:)")
+		return
 	}
+	fmt.Printf(coloring.Yellow("[ Active Todo ]\n"))
 	for _, v := range t.Todo {
-		fmt.Println(v)
+		fmt.Println(coloring.Red("+ ") + v)
 	}
 }
 
 func (t *Todo) ShowArchive() {
 	if len(t.Archive) == 0 {
 		fmt.Println("nothing is here.")
+		return
 	}
+	fmt.Printf(coloring.Yellow("[ Archived Todo ]\n"))
 	for _, v := range t.Archive {
-		fmt.Println(v)
+		fmt.Println(coloring.Red("+ ") + v)
 	}
 }
 
 func (t *Todo) ShowAll() {
-	fmt.Printf("[ ACTIVE TODO ]\n")
+	fmt.Printf(coloring.Yellow("[ Active Todo ]\n"))
 	if len(t.Todo) == 0 {
 		fmt.Println("nothing is here.")
 	}
 	for _, v := range t.Todo {
-		fmt.Println(v)
+		fmt.Println(coloring.Red("+ ") + v)
 	}
-	fmt.Printf("\n[ ARCHIVED TODO ]\n")
+	fmt.Printf(coloring.Yellow("[ Archived Todo ]\n"))
 	if len(t.Archive) == 0 {
 		fmt.Println("nothing is here.")
 	}
 	for _, v := range t.Archive {
-		fmt.Println(v)
+		fmt.Println(coloring.Red("+ ") + v)
 	}
-	fmt.Println("")
 }
 
 func (t *Todo) Save() error {
@@ -277,7 +281,7 @@ func initTodo() error {
 		fmt.Println("Permission denied.")
 		return err
 	}
-	fmt.Println("success!")
+	fmt.Println("Success! 🍻")
 	return nil
 }
 
