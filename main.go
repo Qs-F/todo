@@ -142,7 +142,7 @@ func (t *Todo) Save() error {
 	for _, v := range t.Archive {
 		s += fmt.Sprintf("%s\n", formatMessage(v))
 	}
-	return ioutil.WriteFile(fileDir, []byte(s), 0755)
+	return ioutil.WriteFile(fileDir, []byte(s), 0644)
 }
 
 func main() {
@@ -272,7 +272,7 @@ func initTodo() error {
 	if _, err := os.Stat(currentDir + "/todo"); err == nil { // existing a todo file or directory and it is fiel
 		return errors.New("todo file is already exist.")
 	}
-	err := ioutil.WriteFile(currentDir+"/todo", []byte{}, 0755)
+	err := ioutil.WriteFile(currentDir+"/todo", []byte{}, 0644)
 	if err != nil {
 		fmt.Println("Permission denied.")
 		return err
