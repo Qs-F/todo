@@ -11,7 +11,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/Qs-F/coloring"
+	"github.com/fatih/color"
 )
 
 const (
@@ -74,7 +74,7 @@ func (t *Todo) ArchiveTodo() {
 		return
 	}
 	for i, v := range t.Todo {
-		fmt.Printf(coloring.Red("[ %d ] ")+"%s\n", i, fmt.Sprintf("%s", v))
+		fmt.Printf(color.RedString("[ %d ] ")+"%s\n", i, fmt.Sprintf("%s", v))
 	}
 	todo := []string{}
 CONFIRM:
@@ -104,9 +104,9 @@ func (t *Todo) ShowTodo() {
 		fmt.Println("nothing is here. have a good day:)")
 		return
 	}
-	fmt.Printf(coloring.Yellow("[ Active Todo ]\n"))
+	fmt.Printf(color.YellowString("[ Active Todo ]\n"))
 	for _, v := range t.Todo {
-		fmt.Println(coloring.Red("+ ") + v)
+		fmt.Println(color.RedString("+ ") + v)
 	}
 }
 
@@ -115,26 +115,26 @@ func (t *Todo) ShowArchive() {
 		fmt.Println("nothing is here.")
 		return
 	}
-	fmt.Printf(coloring.Yellow("[ Archived Todo ]\n"))
+	fmt.Printf(color.YellowString("[ Archived Todo ]\n"))
 	for _, v := range t.Archive {
-		fmt.Println(coloring.Red("+ ") + v)
+		fmt.Println(color.RedString("+ ") + v)
 	}
 }
 
 func (t *Todo) ShowAll() {
-	fmt.Printf(coloring.Yellow("[ Active Todo ]\n"))
+	fmt.Printf(color.YellowString("[ Active Todo ]\n"))
 	if len(t.Todo) == 0 {
 		fmt.Println("nothing is here.")
 	}
 	for _, v := range t.Todo {
-		fmt.Println(coloring.Red("+ ") + v)
+		fmt.Println(color.RedString("+ ") + v)
 	}
-	fmt.Printf(coloring.Yellow("[ Archived Todo ]\n"))
+	fmt.Printf(color.YellowString("[ Archived Todo ]\n"))
 	if len(t.Archive) == 0 {
 		fmt.Println("nothing is here.")
 	}
 	for _, v := range t.Archive {
-		fmt.Println(coloring.Red("+ ") + v)
+		fmt.Println(color.RedString("+ ") + v)
 	}
 }
 
@@ -272,8 +272,8 @@ func initTodo() error {
 			if s == "y" || s == "Y" {
 				break CONFIRM
 			} else {
-				fmt.Println("sorry, try again.")
-				continue CONFIRM
+				fmt.Println("Aborted")
+				return errors.New("abort")
 			}
 		}
 	}
